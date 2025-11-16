@@ -1,0 +1,9 @@
+{% extends 'base_mailing.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}<h1>Добро пожаловать, {{user.username}}</h1>
+{% else %}<h1>Добро пожаловать в сервис рассылки</h1>
+{% endif %}
+
+{% endblock %}

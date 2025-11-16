@@ -1,0 +1,30 @@
+{% extends 'base_mailing.html' %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+<a href="{% url 'mailing:client_form' %}" class="btn btn-primary w-25">Добавить клиента</a>
+
+<div class="container mt-3">
+    <div class="row text-center align-items-center justify-content-center">
+        <table class="table table-hover table-bordered w-75">
+            <thead>
+            <tr>
+                <th scope="col">E-mail</th>
+                <th scope="col">ФИО</th>
+                <th scope="col">Комментарий</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for client in clients %}
+            <tr>
+                <td><a href="{% url 'mailing:client_detail' client.pk %}">{{ client.email }}</a></td>
+                <td>{{ client.name }}</td>
+                <td>{{ client.comment|truncatechars:25 }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
