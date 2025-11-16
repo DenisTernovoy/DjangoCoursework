@@ -1,0 +1,14 @@
+{% extends 'base_mailing.html' %}
+
+{% block title %}Подтверждение{% endblock %}
+
+{% block content %}
+<div class="col-12 m-3 d-flex flex-column align-items-center justify-content-center">
+    <p>Вы действительно хотите удалить сообщение?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">Подтвердить</button>
+        <a class="btn btn-secondary" href="{% url 'mailing:message_detail' object.pk  %}">Отменить</a>
+    </form>
+</div>
+{% endblock %}

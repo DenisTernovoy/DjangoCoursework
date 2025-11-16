@@ -20,4 +20,19 @@ urlpatterns = [
         views.ClientDeleteView.as_view(),
         name="client_delete",
     ),
+    path("messages/", views.MessageListView.as_view(), name="messages"),
+    path("messages/create/", views.MessageCreateView.as_view(), name="message_form"),
+    path(
+        "messages/<int:pk>/", views.MessageDetailView.as_view(), name="message_detail"
+    ),
+    path(
+        "messages/<int:pk>/update",
+        views.MessageUpdateView.as_view(),
+        name="message_update",
+    ),
+    path(
+        "messages/<int:pk>/delete",
+        views.MessageDeleteView.as_view(),
+        name="message_delete",
+    ),
 ]
