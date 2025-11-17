@@ -39,26 +39,30 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
-    statuses = [
+    STATUSES = [
         ("created", "Создана"),
         ("active", "Запущена"),
         ("stopped", "Завершена"),
     ]
 
     timestamp_start = models.DateTimeField(
-        null=True, blank=True, verbose_name="Дата и время первой отправки"
+        null=True,
+        blank=True,
+        verbose_name="Дата и время первой отправки",
     )
     timestamp_end = models.DateTimeField(
         null=True, blank=True, verbose_name="Дата и время последней отправки"
     )
-    status = models.CharField(choices=statuses, verbose_name="Статус")
+    status = models.CharField(
+        choices=STATUSES, verbose_name="Статус", default="created"
+    )
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
         verbose_name="Сообщение",
         related_name="mailings",
     )
-    clients = models.ManyToManyField(Client)
+    clients = models.ManyToManyField(Client, verbose_name="Клиенты")
 
     class Meta:
         verbose_name = "Рассылка"

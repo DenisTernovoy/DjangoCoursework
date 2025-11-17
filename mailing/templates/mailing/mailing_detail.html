@@ -1,0 +1,27 @@
+{% extends 'base_mailing.html' %}
+{% load my_tags %}
+
+{% block title %}Клиент{% endblock %}
+{% block content %}
+<div class="card mb-3 w-50">
+    <div class="row g-0" style="height:350px">
+        <div class="col-md-8">
+            <div class="card-body">
+                <span class="badge badge rounded-pill text-bg-primary">{{object.get_status_display}}</span>
+                <h5 class="card-title">
+                    Сообщение: {{object.message}}
+                </h5>
+                <p class="card-text"><small class="text-body-secondary">Первая отправка:
+                    {{object.timestamp_start|default:'отсутствует'}}</small></p>
+                <p class="card-text"><small class="text-body-secondary">Последняя отправка:
+                    {{object.timestamp_end|default:'отсутствует'}}</small></p>
+                <p class="card-text">Содержимое письма: {{ object.message.message }}</p>
+            </div>
+        </div>
+    </div>
+    <a type="button" class="btn btn-outline-primary" href="{% url 'mailing:mailings' %}">Назад</a>
+    <a type="button" class="btn btn-success" href="{% url 'mailing:mailings' %}">Запустить</a>
+    <a type="button" class="btn btn-secondary" href="{% url 'mailing:mailing_update' object.pk %}">Изменить</a>
+    <a type="button" class="btn btn-danger" href="{% url 'mailing:mailing_delete' object.pk %}">Удалить</a>
+</div>
+{% endblock %}

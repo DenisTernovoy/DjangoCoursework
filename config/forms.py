@@ -12,6 +12,13 @@ class StyleFormMixin:
                         "class": "form-check-input",
                     }
                 )
+            elif isinstance(field, forms.ModelMultipleChoiceField):
+                field.widget.attrs.update(
+                    {
+                        "class": "form-label",
+                    }
+                )
+                print(field_name)
             else:
                 field.widget.attrs.update(
                     {

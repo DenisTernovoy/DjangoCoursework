@@ -1,8 +1,10 @@
+import re
+
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from mailing.forms import ClientForm, MessageForm
+from mailing.forms import ClientForm, MessageForm, MailingForm
 from mailing.models import Client, Mailing, Message
 
 
@@ -75,6 +77,40 @@ class MessageDeleteView(DeleteView):
     success_url = reverse_lazy("mailing:messages")
 
 
+class MailingListView(ListView):
+    model = Mailing
+    context_object_name = "mailings"
+
+
+class MailingCreateView(CreateView):
+    form_class = MailingForm
+    template_name = "mailing/mailing_form.html"
+    success_url = reverse_lazy("mailing:mailings")
+
+
+class MailingDetailView(DetailView):
+    model = Mailing
+
+
+class MailingUpdateView(UpdateView):
+    model = Mailing
+    form_class = MailingForm
+    template_name = "mailing/mailing_form.html"
+    success_url = reverse_lazy("mailing:mailings")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["change_flag"] = True
+
+        return context
+
+
+class MailingDeleteView(DeleteView):
+    model = Mailing
+    template_name = "mailing/mailing_confirm_delete.html"
+    success_url = reverse_lazy("mailing:mailings")
+
+
 class MailingView(TemplateView):
     model = Mailing
-    template_name = "mailing/mailing_list.html"
+    template_name = "mailing/mailing_main.html"
