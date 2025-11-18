@@ -10,7 +10,7 @@
     <div class="card w-50 m-2" style="max-width:550px">
         <h5 class="card-header">{{ message.title }}</h5>
         <div class="card-body">
-            <p class="card-text">{{ message.message }}</p>
+            <p class="card-text">{{ message.message|truncatechars:25 }}</p>
             <a href="{% url 'mailing:message_detail' message.pk %}" class="btn btn-primary">Подробнее</a>
         </div>
     </div>

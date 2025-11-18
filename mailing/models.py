@@ -58,9 +58,10 @@ class Mailing(models.Model):
     )
     message = models.ForeignKey(
         Message,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         verbose_name="Сообщение",
         related_name="mailings",
+        null=True,
     )
     clients = models.ManyToManyField(Client, verbose_name="Клиенты")
 
@@ -74,7 +75,7 @@ class Mailing(models.Model):
 
 
 class Attempt(models.Model):
-    statuses = [
+    STATUSES = [
         (
             "ok",
             "Успешно",
@@ -82,10 +83,13 @@ class Attempt(models.Model):
         ("nok", "Не успешно"),
     ]
     datetime_attempt = models.DateTimeField(verbose_name="Дата и время попытки")
-    status = models.CharField(choices=statuses, verbose_name="Статус")
+    status = models.CharField(choices=STATUSES, verbose_name="Статус")
     response = models.TextField(verbose_name="Ответ почтового сервера")
     mailing = models.ForeignKey(
-        Mailing, on_delete=models.CASCADE, verbose_name="Рассылка"
+        Mailing, on_delete=models.SET_NULL, verbose_name="Рассылка", null=True
+    )
+    recipient = models.ForeignKey(
+        Client, verbose_name="Получатели", on_delete=models.SET_NULL, null=True
     )
 
     class Meta:
@@ -94,4 +98,4 @@ class Attempt(models.Model):
         ordering = ["-datetime_attempt"]
 
     def __str__(self):
-        return self.mailing
+        return self.mailing.message.title

@@ -12,16 +12,22 @@
                     Сообщение: {{object.message}}
                 </h5>
                 <p class="card-text"><small class="text-body-secondary">Первая отправка:
-                    {{object.timestamp_start|default:'отсутствует'}}</small></p>
+                    {{object.timestamp_start|date:"d.m.Y H:i"|default:'отсутствует'}}</small></p>
                 <p class="card-text"><small class="text-body-secondary">Последняя отправка:
-                    {{object.timestamp_end|default:'отсутствует'}}</small></p>
+                    {{object.timestamp_end|date:"d.m.Y H:i"|default:'отсутствует'}}</small></p>
                 <p class="card-text">Содержимое письма: {{ object.message.message }}</p>
             </div>
         </div>
     </div>
     <a type="button" class="btn btn-outline-primary" href="{% url 'mailing:mailings' %}">Назад</a>
-    <a type="button" class="btn btn-success" href="{% url 'mailing:mailings' %}">Запустить</a>
+
+    {% if object.status == 'created' %}
+    <a type="button" class="btn btn-success" href="{% url 'mailing:run_mailing' object.pk %}">Отправить</a>
     <a type="button" class="btn btn-secondary" href="{% url 'mailing:mailing_update' object.pk %}">Изменить</a>
+    {% elif object.status == 'active' %}
+    <a type="button" class="btn btn-warning" href="{% url 'mailing:stop_mailing' object.pk %}">Завершить</a>
+    {% endif %}
+
     <a type="button" class="btn btn-danger" href="{% url 'mailing:mailing_delete' object.pk %}">Удалить</a>
 </div>
 {% endblock %}

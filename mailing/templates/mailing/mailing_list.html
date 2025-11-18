@@ -19,8 +19,8 @@
             <tbody>
             {% for mailing in mailings %}
             <tr>
-                <td>{{ mailing.timestamp_start }}</td>
-                <td>{{ mailing.timestamp_end }}</td>
+                <td>{{ mailing.timestamp_start|date:"d.m.Y H:i" }}</td>
+                <td>{{ mailing.timestamp_end|date:"d.m.Y H:i" }}</td>
                 <td><a href="{% url 'mailing:mailing_detail' mailing.pk %}">{{ mailing.message }}</a></td>
                 <td>{{ mailing.get_status_display }}</td>
             </tr>

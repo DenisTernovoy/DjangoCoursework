@@ -2,8 +2,16 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}<h1>Добро пожаловать, {{user.username}}</h1>
-{% else %}<h1>Добро пожаловать в сервис рассылки</h1>
-{% endif %}
+<div class="container d-flex mt-2 align-items-center justify-content-center">
+    {% if user.is_authenticated %}<h1>Добро пожаловать, {{user.username}}</h1>
+    {% else %}<h1>Добро пожаловать в сервис рассылки</h1>
+    {% endif %}
+</div>
+
+<div>
+    <p>Количество всех рассылок: {{count.mailings}}</p>
+    <p>Количество активных рассылок: {{count.mailings_active}}</p>
+    <p>Количество уникальных получателей: {{count.clients}}</p>
+</div>
 
 {% endblock %}
