@@ -1,6 +1,6 @@
 from django import forms
 
-from config.forms import StyleFormMixin
+from config.mixins import StyleFormMixin
 from mailing.models import Client, Message, Mailing
 
 
@@ -19,17 +19,11 @@ class MessageForm(StyleFormMixin, forms.ModelForm):
 class MailingForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Mailing
-        exclude = ("status",)
+        exclude = (
+            "timestamp_start",
+            "timestamp_end",
+            "status",
+        )
         widgets = {
-            "timestamp_start": forms.DateTimeInput(
-                attrs={
-                    "type": "datetime-local",  # Задает тип входного поля
-                }
-            ),
-            "timestamp_end": forms.DateTimeInput(
-                attrs={
-                    "type": "datetime-local",  # Задает тип входного поля
-                }
-            ),
             "clients": forms.CheckboxSelectMultiple(),
         }
