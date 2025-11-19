@@ -1,0 +1,28 @@
+{% extends 'base_mailing.html' %}
+{% load my_tags %}
+
+{% block title %}Пользователь{% endblock %}
+{% block content %}
+<div class="card mb-3 w-50">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{{ object.avatar|show_product_photo }}" class="img-fluid rounded-start" alt="Аватар отсутствует">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">Электронная почта: {{object.email}}</h5>
+                <p class="card-text">Никнейм: {{object.nickname|default:'отсутствует'}}</p>
+                <p class="card-text">Телефон: {{object.phone|default:'отсутствует'}}</p>
+                <p class="card-text">Страна: {{object.country|default:'отсутствует'}}</p>
+            </div>
+        </div>
+    </div>
+    {% if user == object %}
+    <a type="button" class="btn btn-secondary" href="{% url 'users:profile_update' user.pk %}">Изменить</a>
+    {% elif perms.users.can_block_users and object.is_active %}
+    <a type="button" class="btn btn-danger" href="{% url 'users:block_user' object.pk %}">Заблокировать</a>
+    {% elif perms.users.can_block_users and not object.is_active %}
+    <a type="button" class="btn btn-success" href="{% url 'users:unblock_user' object.pk %}">Разблокировать</a>
+    {% endif %}
+</div>
+{% endblock %}

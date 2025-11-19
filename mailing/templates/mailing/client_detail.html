@@ -18,7 +18,9 @@
         </div>
     </div>
     <a type="button" class="btn btn-outline-primary" href="{% url 'mailing:clients' %}">Назад</a>
+    {% if user == object.owner %}
     <a type="button" class="btn btn-secondary" href="{% url 'mailing:client_update' object.pk %}">Изменить</a>
     <a type="button" class="btn btn-danger" href="{% url 'mailing:client_delete' object.pk %}">Удалить</a>
+    {% endif %}
 </div>
 {% endblock %}

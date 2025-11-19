@@ -21,13 +21,18 @@
     </div>
     <a type="button" class="btn btn-outline-primary" href="{% url 'mailing:mailings' %}">Назад</a>
 
-    {% if object.status == 'created' %}
+    {% if user == object.owner and object.status == 'created' %}
     <a type="button" class="btn btn-success" href="{% url 'mailing:run_mailing' object.pk %}">Отправить</a>
     <a type="button" class="btn btn-secondary" href="{% url 'mailing:mailing_update' object.pk %}">Изменить</a>
-    {% elif object.status == 'active' %}
+    {% elif user == object.owner and object.status == 'active' %}
     <a type="button" class="btn btn-warning" href="{% url 'mailing:stop_mailing' object.pk %}">Завершить</a>
     {% endif %}
-
+    {% if user == object.owner %}
     <a type="button" class="btn btn-danger" href="{% url 'mailing:mailing_delete' object.pk %}">Удалить</a>
+    {% elif perms.mailing.can_pause_mailings and object.status != 'paused' %}
+    <a type="button" class="btn btn-warning" href="{% url 'mailing:pause_mailing' object.pk %}">Приостановить</a>
+    {% elif perms.mailing.can_pause_mailings and object.status == 'paused' %}
+    <a type="button" class="btn btn-success" href="{% url 'mailing:active_mailing' object.pk %}">Активировать</a>
+    {% endif %}
 </div>
 {% endblock %}

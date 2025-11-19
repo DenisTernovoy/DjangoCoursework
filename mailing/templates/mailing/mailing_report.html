@@ -1,0 +1,18 @@
+{% extends 'base_mailing.html' %}
+
+{% block content %}
+
+<div class="container d-flex mt-2 align-items-center justify-content-center">
+    {% if user.nickname %}<h1>Статистика рассылок для {{user.nickname}}</h1>
+    {% else %}<h1>Статистика рассылок</h1>
+    {% endif %}
+</div>
+
+{% if user.is_authenticated %}
+<div>
+    <p>Количество всех писем: {{attempts_all}}</p>
+    <p>Количество успешных попыток: {{attempts_success}}</p>
+</div>
+{% endif %}
+
+{% endblock %}

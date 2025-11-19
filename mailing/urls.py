@@ -53,4 +53,7 @@ urlpatterns = [
     path("mailings/<int:pk>/run", views.run_mailing, name="run_mailing"),
     path("mailings/<int:pk>/stop", views.stop_mailing, name="stop_mailing"),
     path("mailings/attempts/", views.AttemptListView.as_view(), name="attempts"),
+    path("mailings/<int:pk>/pause", views.pause_mailing, name="pause_mailing"),
+    path("mailings/<int:pk>/active", views.active_mailing, name="active_mailing"),
+    path("mailings/report/", views.report, name="report"),
 ]

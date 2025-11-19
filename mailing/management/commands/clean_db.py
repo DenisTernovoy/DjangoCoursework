@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from mailing.models import *
+from mailing.models import Client, Message, Mailing, Attempt
 
 
 class Command(BaseCommand):

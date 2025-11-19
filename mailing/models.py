@@ -1,13 +1,22 @@
 from django.db import models
 
+from users.models import CustomUser
+
 
 # Create your models here.
 class Client(models.Model):
-    email = models.EmailField(unique=True, max_length=100, verbose_name="Email")
+    email = models.EmailField(max_length=100, verbose_name="Email")
     name = models.CharField(max_length=100, verbose_name="ФИО")
     comment = models.TextField(null=True, blank=True, verbose_name="Комментарий")
     avatar = models.ImageField(
         upload_to="mailing/photo", verbose_name="Аватар", null=True, blank=True
+    )
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -17,6 +26,18 @@ class Client(models.Model):
         verbose_name = "Клиент"
         verbose_name_plural = "Клиенты"
         ordering = ["email"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "email",
+                    "owner",
+                ),
+                name="unique_client",
+            )
+        ]
+        permissions = [
+            ("can_watch_clients", "Can watch clients"),
+        ]
 
     def __str__(self):
         return self.email
@@ -26,6 +47,14 @@ class Message(models.Model):
     title = models.CharField(max_length=120, verbose_name="Тема письма")
     message = models.TextField(verbose_name="Тело письма")
 
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True,
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -33,6 +62,10 @@ class Message(models.Model):
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
         ordering = ["-created_at"]
+
+        permissions = [
+            ("can_watch_messages", "Can watch messages"),
+        ]
 
     def __str__(self):
         return self.title
@@ -42,6 +75,7 @@ class Mailing(models.Model):
     STATUSES = [
         ("created", "Создана"),
         ("active", "Запущена"),
+        ("paused", "Остановлена"),
         ("stopped", "Завершена"),
     ]
 
@@ -65,10 +99,22 @@ class Mailing(models.Model):
     )
     clients = models.ManyToManyField(Client, verbose_name="Клиенты")
 
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
         ordering = ["status"]
+        permissions = [
+            ("can_pause_mailings", "Can pause mailings"),
+            ("can_watch_mailings", "Can watch mailings"),
+        ]
 
     def __str__(self):
         return self.message.title
@@ -92,10 +138,18 @@ class Attempt(models.Model):
         Client, verbose_name="Получатели", on_delete=models.SET_NULL, null=True
     )
 
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         verbose_name = "Попытка"
         verbose_name_plural = "Попытки"
         ordering = ["-datetime_attempt"]
 
     def __str__(self):
-        return self.mailing.message.title
+        return str(self.mailing)
