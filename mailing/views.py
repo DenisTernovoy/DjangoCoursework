@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
@@ -269,6 +270,10 @@ class AttemptListView(LoginRequiredMixin, ListView):
 
 def run_mailing(request, pk):
     mailing = Mailing.objects.get(id=pk)
+
+    if request.user != mailing.owner:
+        raise PermissionDenied
+
     mailing.status = "active"
     mailing.timestamp_start = timezone.now()
     mailing.save()
@@ -298,6 +303,10 @@ def run_mailing(request, pk):
 
 def stop_mailing(request, pk):
     mailing = Mailing.objects.get(id=pk)
+
+    if request.user != mailing.owner:
+        raise PermissionDenied
+
     mailing.status = "stopped"
     mailing.timestamp_end = timezone.now()
     mailing.save()
@@ -305,6 +314,7 @@ def stop_mailing(request, pk):
     return redirect("mailing:mailings")
 
 
+@permission_required("can_pause_mailings")
 def pause_mailing(request, pk):
     mailing = Mailing.objects.get(id=pk)
     mailing.status = "paused"
@@ -313,6 +323,7 @@ def pause_mailing(request, pk):
     return redirect("mailing:mailings")
 
 
+@permission_required("can_pause_mailings")
 def active_mailing(request, pk):
     mailing = Mailing.objects.get(id=pk)
     mailing.status = "active"
