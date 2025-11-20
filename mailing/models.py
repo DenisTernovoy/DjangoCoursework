@@ -92,7 +92,7 @@ class Mailing(models.Model):
     )
     message = models.ForeignKey(
         Message,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         verbose_name="Сообщение",
         related_name="mailings",
         null=True,
