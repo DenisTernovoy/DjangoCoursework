@@ -11,6 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from mailing.forms import ClientForm, MessageForm, MailingForm
 from mailing.models import Client, Mailing, Message, Attempt
 from mailing.services import send_simple_email, get_messages_list
+from django.core.cache import cache
 
 
 # Create your views here.
@@ -28,6 +29,11 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
     form_class = ClientForm
     template_name = "mailing/client_form.html"
     success_url = reverse_lazy("mailing:clients")
+
+    def get_context_data(self, **kwargs):
+        if self.request.user.groups.filter(name="Manager").exists():
+            raise PermissionDenied
+        return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         client = form.save(commit=False)
@@ -58,8 +64,9 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("mailing:clients")
 
     def get_context_data(self, **kwargs):
-        if self.request.user != self.object.owner:
+        if self.request.user.groups.filter(name="Manager").exists():
             raise PermissionDenied
+        return super().get_context_data(**kwargs)
 
         context = super().get_context_data(**kwargs)
         context["change_flag"] = True
@@ -71,6 +78,11 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     template_name = "mailing/client_confirm_delete.html"
     success_url = reverse_lazy("mailing:clients")
+
+    def get_context_data(self, **kwargs):
+        if self.request.user != self.object.owner:
+            raise PermissionDenied
+        return super().get_context_data(**kwargs)
 
 
 class MessageListView(LoginRequiredMixin, ListView):
@@ -88,10 +100,16 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
     template_name = "mailing/message_form.html"
     success_url = reverse_lazy("mailing:messages")
 
+    def get_context_data(self, **kwargs):
+        if self.request.user.groups.filter(name="Manager").exists():
+            raise PermissionDenied
+        return super().get_context_data(**kwargs)
+
     def form_valid(self, form):
         message = form.save(commit=False)
         message.owner = self.request.user
         message.save()
+        cache.delete(f"messages_of_{self.request.user}")
 
         return super().form_valid(form)
 
@@ -130,6 +148,15 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "mailing/message_confirm_delete.html"
     success_url = reverse_lazy("mailing:messages")
 
+    def form_valid(self, form):
+        cache.delete(f"messages_of_{self.request.user}")
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        if self.request.user != self.object.owner:
+            raise PermissionDenied
+        return super().get_context_data(**kwargs)
+
 
 class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
@@ -145,6 +172,11 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     form_class = MailingForm
     template_name = "mailing/mailing_form.html"
     success_url = reverse_lazy("mailing:mailings")
+
+    def get_context_data(self, **kwargs):
+        if self.request.user.groups.filter(name="Manager").exists():
+            raise PermissionDenied
+        return super().get_context_data(**kwargs)
 
     def get_form(self, form_class=MailingForm):
         form = super().get_form(form_class)
@@ -194,6 +226,11 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = "mailing/mailing_confirm_delete.html"
     success_url = reverse_lazy("mailing:mailings")
+
+    def get_context_data(self, **kwargs):
+        if self.request.user != self.object.owner:
+            raise PermissionDenied
+        return super().get_context_data(**kwargs)
 
 
 class MailingView(LoginRequiredMixin, TemplateView):
