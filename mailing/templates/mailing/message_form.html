@@ -1,0 +1,16 @@
+{% extends 'base_mailing.html' %}
+
+{% block title %}Добавление клиента{% endblock %}
+{% block content %}
+<div class="card mb-4 box-shadow w-50 p-4">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary w-100">
+            {% if change_flag %}Изменить
+            {% else %}Добавить
+            {% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

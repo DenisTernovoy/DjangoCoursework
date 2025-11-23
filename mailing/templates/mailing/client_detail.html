@@ -1,0 +1,26 @@
+{% extends 'base_mailing.html' %}
+{% load my_tags %}
+
+{% block title %}Клиент{% endblock %}
+{% block content %}
+<div class="card mb-3 w-50">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{{ object.avatar|show_product_photo }}" class="img-fluid rounded-start" alt="Аватар отсутствует">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">Электронная почта: {{object.email}}</h5>
+                <p class="card-text">ФИО: {{object.name}}</p>
+                <p class="card-text"><small class="text-body-secondary">Комментарий:
+                    {{object.comment|default:'отсутствует'}}</small></p>
+            </div>
+        </div>
+    </div>
+    <a type="button" class="btn btn-outline-primary" href="{% url 'mailing:clients' %}">Назад</a>
+    {% if user == object.owner %}
+    <a type="button" class="btn btn-secondary" href="{% url 'mailing:client_update' object.pk %}">Изменить</a>
+    <a type="button" class="btn btn-danger" href="{% url 'mailing:client_delete' object.pk %}">Удалить</a>
+    {% endif %}
+</div>
+{% endblock %}
