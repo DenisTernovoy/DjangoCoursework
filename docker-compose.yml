@@ -14,8 +14,7 @@ services:
       - .env
     environment:
       - DB_HOST=db
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LOCATION=redis://redis:6379/2
   db:
     image: postgres:17-alpine
     ports:
@@ -41,32 +40,6 @@ services:
       - db
     volumes:
       - redis_data:/data
-  celery:
-    build: .
-    command: celery -A config worker -l INFO -P eventlet
-    env_file:
-      - .env
-    environment:
-      - DB_HOST=db
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    depends_on:
-      - redis
-      - db
-      - web
-  beat:
-    build: .
-    command: celery -A config beat -l info -S django
-    env_file:
-      - .env
-    environment:
-      - DB_HOST=db
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    depends_on:
-      - redis
-      - db
-      - celery
 
 volumes:
   postgres_data:
